@@ -28,7 +28,7 @@ def output_points(points, tiling, materialIndex):
         output += "\n[profilepnt]\n"
         output += f"{point['xPosition']:.3f}\n"
         output += f"{point['yPosition']:.3f}\n"
-        output += f"{point['relativePosition']:.3f}\n"
+        output += f"{(round(point['relativePosition'],3) + 0.0):.3f}\n"
         output += f"{tiling:.4f}\n"
     return output
 
@@ -67,7 +67,6 @@ def calc_distances(geometry, checkmapping=False):
 
 
 def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, y_offset, y=False):
-    pass
     output_pts = []
     xPosCurrent = point1["x"]
     xPosEnd = point2["x"]
@@ -78,18 +77,19 @@ def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, y_offset
 
     distanceToGo = math.dist([xPosCurrent, yPosCurrent], [xPosEnd, yPosEnd])
     xRelativeCurrent = xRelativeStart
-    xRelatativeEnd = distanceToGo / repeatFreq + xRelativeCurrent
+    xRelativeEnd = distanceToGo / repeatFreq + xRelativeCurrent
 
     output_pts.append({"xPosition": xPosCurrent, "yPosition": yPosCurrent, "relativePosition": xRelativeCurrent})
 
     # check if on same tile
-    if distanceToGo <= repeatFreq and xRelatativeEnd <= 1:
-        output_pts.append({"xPosition": xPosEnd, "yPosition": yPosEnd, "relativePosition": xRelatativeEnd})
+    if distanceToGo <= repeatFreq and xRelativeEnd <= 1:
+        output_pts.append({"xPosition": xPosEnd, "yPosition": yPosEnd, "relativePosition": xRelativeEnd})
     else:
         if textureDetails["TileableX"] != "Yes":
             warnings.warn("Tiling using non-tileable texture: " + textureDetails["Path"])
         # calculate when to tile
 
+        distanceTravelled = 0
         # do while loop
         while True:
             if xRelativeCurrent < 1:
@@ -108,17 +108,17 @@ def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, y_offset
             output_pts.append(
                 {"xPosition": xPosCurrent, "yPosition": yPosCurrent, "relativePosition": 1})
 
-            if xRelativeCurrent + 1 >= math.floor(xRelatativeEnd): break
+            if xRelativeCurrent + 1 >= math.floor(xRelativeEnd): break
 
             xRelativeCurrent += 1
 
         # final Tile
         output_pts.append(
             {"xPosition": xPosCurrent, "yPosition": yPosCurrent, "relativePosition": 0})
+        xRelativeEnd = xRelativeEnd - xRelativeCurrent
         output_pts.append(
-            {"xPosition": xPosEnd, "yPosition": yPosEnd, "relativePosition": xRelatativeEnd - xRelativeCurrent})
-    print(output_pts)
-    return output_pts
+            {"xPosition": xPosEnd, "yPosition": yPosEnd, "relativePosition": xRelativeEnd})
+    return output_pts, xRelativeEnd
 
 
 def textureMappingComplex(pt_details, textureDetails, materialIndex, leftOffset):
@@ -149,9 +149,9 @@ def textureMappingComplex(pt_details, textureDetails, materialIndex, leftOffset)
 
         counter = 1
         while counter < len(pt_details[index]["geometry"]):
-            output += output_points(
-                tilingBetweenPoints(textureDetails, relativePosition, pt_details[index]["geometry"][counter - 1],
-                                    pt_details[index]["geometry"][counter], 0, True), zRepeatRate, materialIndex)
+            (pts, relativePosition) = tilingBetweenPoints(textureDetails, relativePosition, pt_details[index]["geometry"][counter - 1],
+                                    pt_details[index]["geometry"][counter], 0, True)
+            output += output_points(pts, zRepeatRate, materialIndex)
             counter += 1
     return output
 
@@ -226,8 +226,8 @@ def process_components(source, dict_materials, materials, paths, lines, mode, of
                 xStart = offset + surface["x1"]
                 xEnd = offset + surface["x2"]
                 xStartRelative = (xStart % repeatFreq) / repeatFreq
-                points = tilingBetweenPoints(textureDetails, xStartRelative, {"x": xStart}, {"x": xEnd}, component["height"], False)
-                output_pnts += output_points(points, zRepeatRate, materialIndex)
+                (pts, relativePosition) = tilingBetweenPoints(textureDetails, xStartRelative, {"x": xStart}, {"x": xEnd}, component["height"], False)
+                output_pnts += output_points(pts, zRepeatRate, materialIndex)
 
         case _:
             warnings.warn(
