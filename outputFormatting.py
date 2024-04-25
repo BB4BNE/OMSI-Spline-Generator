@@ -125,35 +125,35 @@ def textureMappingComplex(pt_details, textureDetails, materialIndex, leftOffset)
     repeatFreq = textureDetails["dimX"]
     zRepeatRate = 1 / textureDetails["dimZ"]
 
-    # use right end of leftmost pts
-    referencePos = leftOffset + sum(pt_details[0]["distances"])
-    referenceRelative = (referencePos % repeatFreq) / repeatFreq
+    output = ""
 
-    output_pts = []
-
+    # --------- replace for in loop as not really used --------------
     for pts in pt_details:
+        # use right end of leftmost pts
+        referencePos = leftOffset + sum(pt_details[0]["distances"])
+        referenceRelative = (referencePos % repeatFreq) / repeatFreq
 
         # reverse mode
         if pts["mode"] == -1 or pts["mappings"][-1] is not None:
             print("reverse")
+            index = 0
+            distance = sum(pt_details[index]["distances"])
+            relativePosition = referenceRelative - (distance / repeatFreq)
+
         # forward mode
         else:
             print("forward")
-            distance = sum(pt_details[-1]["distances"])
-            endRelative = distance / repeatFreq + referenceRelative
+            index = -1
+            distance = sum(pt_details[index]["distances"])
+            relativePosition = referenceRelative
 
-            # print(f"Start: {xStart}, End: {xEnd} || {points}")
-
-            # return output_points(points, height, zRepeatRate, materialIndex)
-            # while
-
-            # xRelativeCurrent = pts["mapping"][0] if pts["mapping"][0] is not None else 0
-            # while counter < len(pts["geometry"]):
-            #    pass
-            #    if ()
-            #    counter += 1
-
-    pass
+        counter = 1
+        while counter < len(pt_details[index]["geometry"]):
+            output += output_points(
+                tilingBetweenPoints(textureDetails, relativePosition, pt_details[index]["geometry"][counter - 1],
+                                    pt_details[index]["geometry"][counter], 0, True), zRepeatRate, materialIndex)
+            counter += 1
+    return output
 
 
 def process_components(source, dict_materials, materials, paths, lines, mode, offset):
@@ -213,7 +213,7 @@ def process_components(source, dict_materials, materials, paths, lines, mode, of
                 pass
                 if section["material"] not in materials: materials.append(section["material"])
                 materialIndex = materials.index(section["material"])
-                textureMappingComplex(pt_details, dict_materials[section["material"]], materialIndex, offset)
+                output_pnts += textureMappingComplex(pt_details, dict_materials[section["material"]], materialIndex, offset)
 
         case "surface":
             for surface in component["surfaces"]:

@@ -6,10 +6,10 @@
             "material": "GutterA",
             "orientation": 0,
             "geometry": [
-                {"x":0.000, "y": 0.000, "mapping": null},
-                {"x":0.350, "y": 0.000, "mapping": 0.5},
-                {"x":0.350, "y": 0.150, "mapping": null},
-                {"x":0.500, "y": 0.150, "mapping": null}
+                {"x":0.000, "y": 0.100, "mapping": null},
+                {"x":0.350, "y": 0.100, "mapping": 0.5},
+                {"x":0.350, "y": 0.250, "mapping": null},
+                {"x":0.500, "y": 0.250, "mapping": null}
             ]
         }],
         "aipath": []
