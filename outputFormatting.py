@@ -72,10 +72,10 @@ def checkMapping(point):
             return True
     return False
 
-def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, y_offset, y=False):
+def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, x_offset, y_offset, y=False):
     output_pts = []
-    xPosCurrent = point1["x"]
-    xPosEnd = point2["x"]
+    xPosCurrent = point1["x"] + x_offset
+    xPosEnd = point2["x"] + x_offset
     yPosCurrent = (point1["y"] if y else 0) + y_offset
     yPosEnd = (point2["y"] if y else 0) + y_offset
 
@@ -175,7 +175,7 @@ def textureMappingComplex(pt_details, textureDetails, materialIndex, leftOffset)
         counter = 1
         while counter < len(pt_details[index]["geometry"]):
             (pts, relativePosition) = tilingBetweenPoints(textureDetails, relativePosition, pt_details[index]["geometry"][counter - 1],
-                                    pt_details[index]["geometry"][counter], 0, True)
+                                    pt_details[index]["geometry"][counter], referencePos, 0, True)
             points.extend(pts)
             counter += 1
     return output_points(points, zRepeatRate, materialIndex)
@@ -248,10 +248,8 @@ def process_components(source, dict_materials, materials, paths, lines, mode, of
                 textureDetails = dict_materials[surface["material"]]
                 repeatFreq = textureDetails["dimX"]
                 zRepeatRate = 1 / textureDetails["dimZ"]
-                xStart = offset + surface["x1"]
-                xEnd = offset + surface["x2"]
-                xStartRelative = (xStart % repeatFreq) / repeatFreq
-                (pts, relativePosition) = tilingBetweenPoints(textureDetails, xStartRelative, {"x": xStart}, {"x": xEnd}, component["height"], False)
+                xStartRelative = ((offset + surface["x1"]) % repeatFreq) / repeatFreq
+                (pts, relativePosition) = tilingBetweenPoints(textureDetails, xStartRelative, {"x": surface["x1"]}, {"x": surface["x2"]}, offset, component["height"], False)
                 output_pnts += output_points(pts, zRepeatRate, materialIndex)
 
         case _:
