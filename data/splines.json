@@ -15,8 +15,18 @@
             ],
         "right": [
             {
+                "type": "surface",
+                "name": "3m-shoulderlane-dark",
+                "flip": 0
+            },
+            {
                 "type": "piece",
                 "name": "gutter",
+                "flip": 0
+            },
+            {
+                "type": "surface",
+                "name": "2m-grass",
                 "flip": 0
             }
             ],

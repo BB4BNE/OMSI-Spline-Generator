@@ -155,7 +155,7 @@ def textureMappingComplex(pt_details, textureDetails, materialIndex, leftOffset)
     # --------- replace for in loop as not really used --------------
     for pts in pt_details:
         # use right end of leftmost pts
-        referencePos = leftOffset + sum(pt_details[0]["distances"])
+        referencePos = leftOffset# + sum(pt_details[0]["distances"]) # temp disable
         referenceRelative = (referencePos % repeatFreq) / repeatFreq
 
         # reverse mode
@@ -196,13 +196,19 @@ def process_components(source, dict_materials, materials, paths, lines, mode, of
     # move pointer to left bound of object
     if mode == 0:
         offset += -component["width"] / 2
+        offset2 = offset
+    elif mode == 1:
+        offset2 = offset
+        offset += 0
     else:
+        offset2 = offset + component["width"] * mode
         offset += component["width"] * mode
+        offset2 = offset
 
     if "aiPaths" in component:
-        paths.append({"paths": component["aiPaths"], "height": component["height"], "offset": offset})
+        paths.append({"paths": component["aiPaths"], "height": component["height"], "offset": offset2})
     if "lines" in component:
-        lines.append({"lines": component["lines"], "height": component["height"], "offset": offset})
+        lines.append({"lines": component["lines"], "height": component["height"], "offset": offset2})
 
     match source["type"]:
         case "piece":
