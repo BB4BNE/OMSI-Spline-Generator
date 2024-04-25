@@ -1,0 +1,33 @@
+{
+    "_sampleSurface": {
+        "width": 12,
+        "height": 0.1,
+        "surfaces": [
+            {"x1": 0, "x2": 12, "mapping": null, "material": "blah"}
+        ],
+        "lines": [
+            {"type": "road", "x": 0}
+        ],
+        "aiPaths": [
+            {"type": "road", "x": 0, "width": 1, "direction": "forward"}
+        ]
+    },
+    "12m-/:\\": {
+        "width": 12,
+        "height": 0.1,
+        "surfaces": [
+            {"x1": 0, "x2": 12, "mapping": null, "material": "Road_Asphalt"}
+        ],
+        "lines": [
+            {"type": "Barrier Double", "x": 0},
+            {"type": "Lane Broken (Bus21m)", "x": 3},
+            {"type": "Lane Special", "x": 6},
+            {"type": "Turn Line", "x": -3},
+            {"type": "Bus Zone", "x": -3.5}
+        ],
+        "aiPaths": [
+            {"type": "road", "x": -1.65, "width": 3.1, "direction": "forward"},
+            {"type": "road", "x": 1.65, "width": 3.1, "direction": "reverse"}
+        ]
+    }
+}

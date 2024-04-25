@@ -1,0 +1,9 @@
+{
+    "_sampleSplinePiece": {
+        "centre": "12m-/:\\",
+        "offset": 0,
+        "left": [["vergeA",1],["gutterOld",1]],
+        "right": ["gutterNew","vergeGrass"],
+        "decorations": [{"piece": "", "x": 0, "y": 0}]
+    } 
+}

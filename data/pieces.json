@@ -1,0 +1,13 @@
+{
+    "_samplePiece": {
+        "width": 0,
+        "sections": [
+            {
+            "material": "foo",
+            "geometry": [
+                {"x": 25.25, "y": 9.25, "mapping": null}
+            ]
+        }],
+        "aipath": [{"type": "pedestrian", "x": 0, "y": 0.1, "width": 1, "direction": "forward"}]
+    }    
+}

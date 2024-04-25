@@ -1,0 +1,10 @@
+{
+    "_sampleDecoration": [
+        {
+        "material": "foo",
+        "geometry": [
+            {"x": 25.25, "y": 9.25, "mapping": null}
+        ]
+        }
+    ]
+}
