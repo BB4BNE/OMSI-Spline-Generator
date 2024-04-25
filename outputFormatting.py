@@ -39,9 +39,6 @@ def format_lines(centre, height, lineDetails, materialIndex):
 # assumes flat | only works in positive x direction
 def textureMapping(xStart, xEnd, height, textureDetails, materialIndex):
 
-    if textureDetails["TileableX"] != "Yes":
-            warnings.warn("Tiling using non-tileable texture: " + textureDetails["Path"])
-
     repeatFreq = textureDetails["dimX"]
     yRepeatRate = 1 / textureDetails["dimY"]
 
@@ -49,13 +46,14 @@ def textureMapping(xStart, xEnd, height, textureDetails, materialIndex):
     xStartRelative = (xStart % repeatFreq)/repeatFreq
     xEndRelatative = distance / repeatFreq + xStartRelative
 
-    points = []
-    points.append({"xPosition": xStart, "relativePosition": xStartRelative})
+    points = [{"xPosition": xStart, "relativePosition": xStartRelative}]
 
     # check if on same tile
     if distance <= repeatFreq and xEndRelatative <= 1:
         points.append({"xPosition": xEnd, "relativePosition": xEndRelatative})
     else:
+        if textureDetails["TileableX"] != "Yes":
+            warnings.warn("Tiling using non-tileable texture: " + textureDetails["Path"])
         # calculate when to tile
         xRelativeCurrent = 1
         xPosCurrent = xStart + repeatFreq * (1 - xStartRelative)
