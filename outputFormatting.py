@@ -66,6 +66,12 @@ def calc_distances(geometry, checkmapping=False):
         return distances
 
 
+def checkMapping(point):
+    if "mapping" in point:
+        if point["mapping"] is not None:
+            return True
+    return False
+
 def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, y_offset, y=False):
     output_pts = []
     xPosCurrent = point1["x"]
@@ -73,16 +79,35 @@ def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, y_offset
     yPosCurrent = (point1["y"] if y else 0) + y_offset
     yPosEnd = (point2["y"] if y else 0) + y_offset
 
-    repeatFreq = textureDetails["dimX"]
-
     distanceToGo = math.dist([xPosCurrent, yPosCurrent], [xPosEnd, yPosEnd])
-    xRelativeCurrent = xRelativeStart
-    xRelativeEnd = distanceToGo / repeatFreq + xRelativeCurrent
+
+    if checkMapping(point1):
+        if checkMapping(point2):
+            # true + true
+            repeatFreq = distanceToGo
+            xRelativeCurrent = point1["mapping"]
+            xRelativeEnd = point2["mapping"]
+        else:
+            # true + false
+            repeatFreq = textureDetails["dimX"]
+            xRelativeCurrent = point1["mapping"]
+            xRelativeEnd = distanceToGo / repeatFreq + xRelativeCurrent
+    else:
+        if checkMapping(point2):
+            # false + true
+            repeatFreq = textureDetails["dimX"]
+            xRelativeEnd = point2["mapping"]
+            xRelativeCurrent = (xRelativeEnd - distanceToGo / repeatFreq) % 1
+        else:
+            # false + false
+            repeatFreq = textureDetails["dimX"]
+            xRelativeCurrent = xRelativeStart
+            xRelativeEnd = distanceToGo / repeatFreq + xRelativeCurrent
 
     output_pts.append({"xPosition": xPosCurrent, "yPosition": yPosCurrent, "relativePosition": xRelativeCurrent})
 
     # check if on same tile
-    if distanceToGo <= repeatFreq and xRelativeEnd <= 1:
+    if distanceToGo <= repeatFreq and xRelativeEnd <= 1 and xRelativeCurrent < xRelativeEnd:
         output_pts.append({"xPosition": xPosEnd, "yPosition": yPosEnd, "relativePosition": xRelativeEnd})
     else:
         if textureDetails["TileableX"] != "Yes":
@@ -93,8 +118,8 @@ def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, y_offset
         # do while loop
         while True:
             if xRelativeCurrent < 1:
+                distanceTravelled = repeatFreq * (1 - xRelativeCurrent)
                 xRelativeCurrent = 1
-                distanceTravelled = repeatFreq * (xRelativeCurrent - xRelativeStart)
             else:
                 output_pts.append(
                     {"xPosition": xPosCurrent, "yPosition": yPosCurrent, "relativePosition": 0})
@@ -134,7 +159,7 @@ def textureMappingComplex(pt_details, textureDetails, materialIndex, leftOffset)
         referenceRelative = (referencePos % repeatFreq) / repeatFreq
 
         # reverse mode
-        if pts["mode"] == -1 or pts["mappings"][-1] is not None:
+        if pts["mode"] == -1 or pts["geometry"][-1]["mapping"] is not None:
             print("reverse")
             index = 0
             distance = sum(pt_details[index]["distances"])
