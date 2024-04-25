@@ -125,7 +125,7 @@ def textureMappingComplex(pt_details, textureDetails, materialIndex, leftOffset)
     repeatFreq = textureDetails["dimX"]
     zRepeatRate = 1 / textureDetails["dimZ"]
 
-    output = ""
+    points = []
 
     # --------- replace for in loop as not really used --------------
     for pts in pt_details:
@@ -151,9 +151,9 @@ def textureMappingComplex(pt_details, textureDetails, materialIndex, leftOffset)
         while counter < len(pt_details[index]["geometry"]):
             (pts, relativePosition) = tilingBetweenPoints(textureDetails, relativePosition, pt_details[index]["geometry"][counter - 1],
                                     pt_details[index]["geometry"][counter], 0, True)
-            output += output_points(pts, zRepeatRate, materialIndex)
+            points.extend(pts)
             counter += 1
-    return output
+    return output_points(points, zRepeatRate, materialIndex)
 
 
 def process_components(source, dict_materials, materials, paths, lines, mode, offset):
