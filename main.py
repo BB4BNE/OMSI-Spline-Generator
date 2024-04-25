@@ -81,10 +81,9 @@ for spline in json_splines:
     output += output_pnts_header + output_pnts
     output += output_lines
     output += output_paths
-    print(output)
 
     sli = open(output_dir + "/test.sli", "w")
     sli.write(output)
     sli.close()
 
-print("Stop")
+print("End")
