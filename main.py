@@ -53,7 +53,7 @@ for spline in json_splines:
             lineDetails = dict_lines[line["type"]]
             if lineDetails["Material"] not in materials: materials.append(lineDetails["Material"])
             materialIndex = materials.index(lineDetails["Material"])
-            output_lines += format_lines(line["x"], lineGroup["height"], lineDetails, materialIndex)
+            output_lines += format_lines(line["x"] + lineGroup["offset"], lineGroup["height"], lineDetails, materialIndex)
 
     # Generate Materials after everything else
     output_materials = "\n#### MATERIALS ####\n"

@@ -13,9 +13,9 @@ def format_paths(paths):
         for path in pathGroup["paths"]:
             output += "\n\n[path]\n"
             output += f"{path_type(path['type'])}\n"
-            output += f"{path['x']}\n"
-            output += f"{pathGroup['height']}\n"
-            output += f"{path['width']}\n"
+            output += f"{(path['x'] + pathGroup['offset']):.3f}\n"
+            output += f"{pathGroup['height']:.3f}\n"
+            output += f"{path['width']:.2f}\n"
             output += f"{path_directions(path['direction'])}\n"
     return output
 
@@ -53,8 +53,8 @@ def process_components(source, dict_materials, materials, paths, lines, mode, of
         case "piece":
             pass
         case "surface":
-            paths.append({"paths": component["aiPaths"], "height": component["height"]})
-            lines.append({"lines": component["lines"], "height": component["height"]})
+            paths.append({"paths": component["aiPaths"], "height": component["height"], "offset": offset})
+            lines.append({"lines": component["lines"], "height": component["height"], "offset": offset})
             for surface in component["surfaces"]:
                 if surface["material"] not in materials: materials.append(surface["material"])
                 materialIndex = materials.index(surface["material"])

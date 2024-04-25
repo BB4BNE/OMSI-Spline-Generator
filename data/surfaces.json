@@ -23,12 +23,12 @@
             {"type": "Barrier Double", "x": 0},
             {"type": "Lane Broken (Bus21m)", "x": 3},
             {"type": "Lane Special", "x": 6},
-            {"type": "Turn Line", "x": -3},
-            {"type": "Bus Zone", "x": -3.5}
+            {"type": "Turn Line", "x": 9},
+            {"type": "Bus Zone", "x": 9.5}
         ],
         "aiPaths": [
-            {"type": "road", "x": -1.65, "width": 3.1, "direction": "forward"},
-            {"type": "road", "x": 1.65, "width": 3.1, "direction": "reverse"}
+            {"type": "road", "x": 4.35, "width": 3.1, "direction": "forward"},
+            {"type": "road", "x": 7.65, "width": 3.1, "direction": "reverse"}
         ]
     },
     "3m-shoulderlane": {
@@ -38,10 +38,10 @@
             {"x1": 0, "x2": 3, "mapping": null, "material": "Road_Asphalt_Light"}
         ],
         "lines": [
-            {"type": "Barrier Double", "x": 1}
+            {"type": "Barrier Double", "x": 1.5}
         ],
         "aiPaths": [
-            {"type": "pedestrian", "x": 0, "width": 2, "direction": "both"}
+            {"type": "pedestrian", "x": 1.5, "width": 2, "direction": "both"}
         ]
     }
 }
