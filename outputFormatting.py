@@ -1,16 +1,22 @@
 from enums import *
 import math
+import json
+
+# load JSON files
+json_pieces = json.load(open("data/pieces.json"))
+json_surfaces = json.load(open("data/surfaces.json"))
 
 # Generate Formatted [path] tag sections of .sli files
-def format_paths(centre, paths):
+def format_paths(paths):
     output = "\n\n#### PATHS ####"
-    for path in paths:
-        output += "\n\n[path]\n"
-        output += f"{path_type(path['type'])}\n"
-        output += f"{path['x']}\n"
-        output += f"{centre['height']}\n"
-        output += f"{path['width']}\n"
-        output += f"{path_directions(path['direction'])}\n"
+    for pathGroup in paths:
+        for path in pathGroup["paths"]:
+            output += "\n\n[path]\n"
+            output += f"{path_type(path['type'])}\n"
+            output += f"{path['x']}\n"
+            output += f"{pathGroup['height']}\n"
+            output += f"{path['width']}\n"
+            output += f"{path_directions(path['direction'])}\n"
     return output
 
 def output_points(points, height, tiling, materialIndex):
@@ -25,6 +31,41 @@ def output_points(points, height, tiling, materialIndex):
     return output
 
 
+def process_components(source, dict_materials, materials, paths, lines, mode, offset):
+    output_pnts = ""
+
+    match source["type"]:
+        case "piece":
+            component = json_pieces[source['name']]
+        case "surface":
+            component = json_surfaces[source['name']]
+        case _:
+            warnings.warn(f"invalid use of component type ({source['type']}) for component {source['name']}. Skipping")
+            return materials, paths, lines, offset, offset
+
+    # move pointer to left bound of object
+    if mode == 0:
+        offset += -component["width"] / 2
+    else:
+        offset += component["width"] * mode
+
+    match source["type"]:
+        case "piece":
+            pass
+        case "surface":
+            paths.append({"paths": component["aiPaths"], "height": component["height"]})
+            lines.append({"lines": component["lines"], "height": component["height"]})
+            for surface in component["surfaces"]:
+                if surface["material"] not in materials: materials.append(surface["material"])
+                materialIndex = materials.index(surface["material"])
+                output_pnts += textureMapping(offset + surface["x1"], offset + surface["x2"], component["height"],
+                                              dict_materials[surface["material"]], materialIndex)
+        case _:
+            warnings.warn(f"invalid use of component type ({component['type']}) for component {component['name']}. Skipping")
+            pass
+
+    return output_pnts, materials, paths, lines, offset, offset + component["width"]
+
 def format_lines(centre, height, lineDetails, materialIndex):
 
     line_height_offset = 0.01
@@ -35,6 +76,7 @@ def format_lines(centre, height, lineDetails, materialIndex):
     ]
 
     return output_points(points, height + line_height_offset, lineDetails['Tiling'], materialIndex)
+
 
 # assumes flat | only works in positive x direction
 def textureMapping(xStart, xEnd, height, textureDetails, materialIndex):

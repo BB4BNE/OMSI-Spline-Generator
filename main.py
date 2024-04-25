@@ -1,8 +1,3 @@
-import sys
-import json
-import warnings
-
-from enums import *
 from outputFormatting import *
 
 output_dir = "O:/SteamLibrary/steamapps/common/OMSI 2/Splines/BB4BNE/generated"
@@ -23,41 +18,45 @@ else:
 
 # load JSON files
 json_decorations = json.load(open("data/decorations.json"))
-json_pieces = json.load(open("data/pieces.json"))
 json_splines = json.load(open("data/splines.json"))
-json_surfaces = json.load(open("data/surfaces.json"))
-
 
 for spline in json_splines:
     output = "#### BB4BNE SPLINE GENERATOR ####\n\n"
+
+    # create file level arrays
     materials = []
-    baseHeightOffset = 0
     paths = []
-    xLeft = 0
+    lines = []
 
+    centre = json_splines[spline]["centre"]
     # Process Centre
-    print(json_splines[spline]["centre"])
-    centre = json_surfaces[json_splines[spline]["centre"]]
-    xLeft = 0 - (centre["width"] / 2) - json_splines[spline]["offset"]
-    paths.extend(centre["aiPaths"])
+    if centre["type"] != "decoration":
 
-    output_pnts = "\n#### POINTS ####\n"
-    output_materials = "\n#### MATERIALS ####\n"
-    output_lines = "\n#### LINES ####\n"
+        output_pnts_header = "\n#### POINTS ####\n"
 
-    for surface in centre["surfaces"]:
-        if surface["material"] not in materials: materials.append(surface["material"])
-        materialIndex = materials.index(surface["material"])
-        output_pnts += textureMapping(xLeft + surface["x1"], xLeft + surface["x2"], centre["height"], dict_materials[surface["material"]], materialIndex)
+        left = list(reversed(json_splines[spline]["left"]))
+        right = json_splines[spline]["right"]
 
-    for line in centre["lines"]:
-        lineDetails = dict_lines[line["type"]]
-        if lineDetails["Material"] not in materials: materials.append(lineDetails["Material"])
-        materialIndex = materials.index(lineDetails["Material"])
-        output_lines += format_lines(line["x"], centre["height"], lineDetails, materialIndex)
+        (output_pnts, materials, paths, lines, xLeft, xRight) = process_components(centre, dict_materials, materials, paths, lines, 0, centre["offset"])
+
+        for component in left:
+            (output_pnts_body, materials, paths, lines, xLeft, _) = process_components(component, dict_materials, materials, paths, lines, -1, xLeft)
+            output_pnts = output_pnts_body + output_pnts
+        for component in right:
+            (output_pnts_body, materials, paths, lines, _, xRight) = process_components(component, dict_materials, materials, paths, lines, 1, xRight)
+            output_pnts += output_pnts_body
 
     # output results
+    output_lines = "\n#### LINES ####\n"
+    for lineGroup in lines:
+        for line in lineGroup["lines"]:
+            lineDetails = dict_lines[line["type"]]
+            if lineDetails["Material"] not in materials: materials.append(lineDetails["Material"])
+            materialIndex = materials.index(lineDetails["Material"])
+            output_lines += format_lines(line["x"], lineGroup["height"], lineDetails, materialIndex)
 
+    # Generate Materials after everything else
+    output_materials = "\n#### MATERIALS ####\n"
     for material in materials:
         materialDetails = dict_materials[material]
         output_materials += "\n[texture]\n"
@@ -67,12 +66,19 @@ for spline in json_splines:
         if materialDetails['Alpha'][0] == "0":
             continue
 
-        output_materials += "\n[matl_alpha]\n"
-        output_materials += f"{materialDetails['Alpha'][0]}\n"
+        output_materials += "[matl_alpha]\n"
+        output_materials += f"{materialDetails['Alpha'][0]}\n\n"
 
-    output_paths = format_paths(centre, paths) if len(paths) > 0 else ""
+
+    decorations = json_splines[spline]["decorations"]
+    output_decoration = "\n#### DECORATIONS ####\n"
+    for decoration in decorations:
+        pass
+
+    # check if paths is right
+    output_paths = format_paths(paths) if len(paths) > 0 else ""
     output += output_materials
-    output += output_pnts
+    output += output_pnts_header + output_pnts
     output += output_lines
     output += output_paths
     print(output)

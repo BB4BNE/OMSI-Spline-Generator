@@ -16,7 +16,8 @@
         "width": 12,
         "height": 0.1,
         "surfaces": [
-            {"x1": 0, "x2": 12, "mapping": null, "material": "Road_Asphalt"}
+            {"x1": 0, "x2": 12, "mapping": null, "material": "Road_Asphalt"},
+            {"x1": 12, "x2": 15, "mapping": null, "material": "Road_Asphalt_Light"}
         ],
         "lines": [
             {"type": "Barrier Double", "x": 0},
@@ -28,6 +29,19 @@
         "aiPaths": [
             {"type": "road", "x": -1.65, "width": 3.1, "direction": "forward"},
             {"type": "road", "x": 1.65, "width": 3.1, "direction": "reverse"}
+        ]
+    },
+    "3m-shoulderlane": {
+        "width": 3,
+        "height": 0.1,
+        "surfaces": [
+            {"x1": 0, "x2": 3, "mapping": null, "material": "Road_Asphalt_Light"}
+        ],
+        "lines": [
+            {"type": "Barrier Double", "x": 1}
+        ],
+        "aiPaths": [
+            {"type": "pedestrian", "x": 0, "width": 2, "direction": "both"}
         ]
     }
 }
