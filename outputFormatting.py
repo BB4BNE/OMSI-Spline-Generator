@@ -4,6 +4,7 @@ import json
 
 # load JSON files
 json_pieces = json.load(open("data/pieces.json"))
+json_decorations = json.load(open("data/decorations.json"))
 json_surfaces = json.load(open("data/surfaces.json"))
 
 
@@ -14,10 +15,11 @@ def format_paths(paths):
         for path in pathGroup["paths"]:
             output += "\n\n[path]\n"
             output += f"{path_type(path['type'])}\n"
-            output += f"{(path['x'] + pathGroup['offset']):.3f}\n"
+            pathX = pathGroup['width'] - path['x'] if pathGroup["flipped"] else path['x']
+            output += f"{(pathX + pathGroup['offset']):.3f}\n"
             output += f"{pathGroup['height']:.3f}\n"
             output += f"{path['width']:.2f}\n"
-            output += f"{path_directions(path['direction'])}\n"
+            output += f"{path_directions(path['direction'], pathGroup['flipped'])}\n"
     return output
 
 
@@ -33,37 +35,50 @@ def output_points(points, tiling, materialIndex):
     return output
 
 
-def calc_distances(geometry, checkmapping=False):
+def calc_distances(geometry, width, checkmapping=False, flipped=False):
     counter = 0
     mappings = []
     mappingsCount = 0
     mappingIndexFirst = -1
     distances = []
 
+    newGeometry = []
+    if not flipped:
+        newGeometry = geometry
+    else:
+        for point in geometry:
+            newGeometry.insert(0,
+                {
+                    "x": width - point['x'],
+                    "y": point['y'],
+                    "mapping": 1 - point['mapping'] if point['mapping'] is not None else point['mapping'],
+                }
+            )
+
     x = -1
     y = -1
-    while counter < len(geometry):
-        mappings.append(geometry[counter]["mapping"])
-        if geometry[counter]["mapping"] is not None:
+    while counter < len(newGeometry):
+        mappings.append(newGeometry[counter]["mapping"])
+        if newGeometry[counter]["mapping"] is not None:
             mappingsCount += 1
             if mappingIndexFirst == -1: mappingIndexFirst = counter
 
         x_old = x
         y_old = y
-        x = geometry[counter]["x"]
-        y = geometry[counter]["y"]
+        x = newGeometry[counter]["x"]
+        y = newGeometry[counter]["y"]
         if counter > 0:
             distances.append(math.dist([x_old, y_old], [x, y]))
         counter += 1
     if checkmapping:
         if mappingsCount <= 1 or (
-                mappingsCount == 2 and geometry[0]["mapping"] is not None and geometry[-1]["mapping"] is not None):
+                mappingsCount == 2 and newGeometry[0]["mapping"] is not None and newGeometry[-1]["mapping"] is not None):
             pass
         else:
             warnings.warn(f"More than one mapping point defined except ends. Using first for {distances}")
-        return distances, mappings, mappingIndexFirst, mappingsCount
+        return distances, newGeometry, mappings, mappingIndexFirst, mappingsCount
     else:
-        return distances
+        return distances, newGeometry
 
 
 def checkMapping(point):
@@ -114,7 +129,6 @@ def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, x_offset
             warnings.warn("Tiling using non-tileable texture: " + textureDetails["Path"])
         # calculate when to tile
 
-        distanceTravelled = 0
         # do while loop
         while True:
             if xRelativeCurrent < 1:
@@ -123,7 +137,7 @@ def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, x_offset
             else:
                 output_pts.append(
                     {"xPosition": xPosCurrent, "yPosition": yPosCurrent, "relativePosition": 0})
-                distanceTravelled += repeatFreq
+                distanceTravelled = repeatFreq
 
             distanceTravelledRatio = distanceTravelled / distanceToGo
             xPosCurrent += distanceTravelledRatio * (xPosEnd - xPosCurrent)
@@ -146,7 +160,7 @@ def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, x_offset
     return output_pts, xRelativeEnd
 
 
-def textureMappingComplex(pt_details, textureDetails, materialIndex, leftOffset):
+def textureMappingComplex(pt_details, textureDetails, materialIndex, offset = {"x": 0,"y": 0}):
     repeatFreq = textureDetails["dimX"]
     zRepeatRate = 1 / textureDetails["dimZ"]
 
@@ -155,19 +169,16 @@ def textureMappingComplex(pt_details, textureDetails, materialIndex, leftOffset)
     # --------- replace for in loop as not really used --------------
     for pts in pt_details:
         # use right end of leftmost pts
-        referencePos = leftOffset# + sum(pt_details[0]["distances"]) # temp disable
-        referenceRelative = (referencePos % repeatFreq) / repeatFreq
+        referenceRelative = (offset['x'] % repeatFreq) / repeatFreq
 
         # reverse mode
         if pts["mode"] == -1 or pts["geometry"][-1]["mapping"] is not None:
-            print("reverse")
             index = 0
             distance = sum(pt_details[index]["distances"])
             relativePosition = referenceRelative - (distance / repeatFreq)
 
         # forward mode
         else:
-            print("forward")
             index = -1
             distance = sum(pt_details[index]["distances"])
             relativePosition = referenceRelative
@@ -175,95 +186,126 @@ def textureMappingComplex(pt_details, textureDetails, materialIndex, leftOffset)
         counter = 1
         while counter < len(pt_details[index]["geometry"]):
             (pts, relativePosition) = tilingBetweenPoints(textureDetails, relativePosition, pt_details[index]["geometry"][counter - 1],
-                                    pt_details[index]["geometry"][counter], referencePos, 0, True)
+                                    pt_details[index]["geometry"][counter], offset['x'], offset['y'], True)
             points.extend(pts)
             counter += 1
     return output_points(points, zRepeatRate, materialIndex)
 
 
-def process_components(source, dict_materials, materials, paths, lines, mode, offset):
+def complexComponentBreakdown(component, dict_materials, materials, offset, flip):
+    pt_details = []
+    for section in component["sections"]:
+        distances, newGeometry, mappings, mappingIndexFirst, mappingsCount = calc_distances(section["geometry"], component["width"], True, flip)
+
+        # split if mappingIndex is mid-point
+        if mappingIndexFirst != -1 and mappingIndexFirst != 0 and mappingIndexFirst != len(mappings) - 1:
+            pt_details.append({
+                "geometry": newGeometry[:mappingIndexFirst + 1],
+                "distances": distances[:mappingIndexFirst],
+                "mappings": mappings[:mappingIndexFirst + 1],
+                "mode": -1
+            })
+            pt_details.append({
+                "geometry": newGeometry[mappingIndexFirst:],
+                "distances": distances[mappingIndexFirst:],
+                "mappings": mappings[mappingIndexFirst:],
+                "mode": 1
+            })
+        else:
+            pt_details.append({
+                "geometry": newGeometry,
+                "distances": distances,
+                "mappings": mappings,
+                "mode": 0
+            })
+
+        pass
+        if section["material"] not in materials: materials.append(section["material"])
+        materialIndex = materials.index(section["material"])
+        return textureMappingComplex(pt_details, dict_materials[section["material"]], materialIndex, offset)
+
+
+def process_components(source, dict_materials, materials, paths, lines, heightProfiles, mode, offset):
     output_pnts = ""
+
+    flip = source["flip"] == 1
 
     match source["type"]:
         case "piece":
             component = json_pieces[source['name']]
         case "surface":
             component = json_surfaces[source['name']]
+        case "decoration":
+            component = json_decorations[source['name']]
         case _:
             warnings.warn(f"invalid use of component type ({source['type']}) for component {source['name']}. Skipping")
-            return materials, paths, lines, offset, offset
+            return materials, paths, lines, heightProfiles, offset, offset
+
+    component["height"] = component["height"] if "height" in component else 0
+    y_offset = (source["y"] if "y" in source else 0) + component["height"]
+    x_offset = source["x"] if "x" in source else 0
 
     # move pointer to left bound of object
     if mode == 0:
+        # middle
         offset += -component["width"] / 2
         offset2 = offset
     elif mode == 1:
+        # right
         offset2 = offset
         offset += 0
+    elif mode == 3:
+        # decorations
+        offset = x_offset
+        offset2 = x_offset
+        component["width"] = 0
     else:
-        offset2 = offset + component["width"] * mode
+        # left (-1)
+        #   offset2 = offset + component["width"] * mode
         offset += component["width"] * mode
         offset2 = offset
 
     if "aiPaths" in component:
-        paths.append({"paths": component["aiPaths"], "height": component["height"], "offset": offset2})
+        paths.append({
+            "paths": component["aiPaths"],
+            "height": component["height"],
+            "width": component["width"],
+            "flipped": flip,
+            "offset": offset2
+        })
     if "lines" in component:
-        lines.append({"lines": component["lines"], "height": component["height"], "offset": offset2})
+        lines.append({
+            "lines": component["lines"],
+            "height": component["height"],
+            "width": component["width"],
+            "flipped": flip,
+            "offset": offset2
+        })
 
-    match source["type"]:
-        case "piece":
-            pass
+    # Switch. Process different types
+    if source["type"] == "piece" or source["type"] == "decoration":
+            output_pnts += complexComponentBreakdown(component, dict_materials, materials, {"x": offset, "y": y_offset}, flip)
 
-            pt_details = []
-            for section in component["sections"]:
-                distances, mappings, mappingIndexFirst, mappingsCount = calc_distances(section["geometry"], True)
-                print(distances, mappings, mappingIndexFirst, mappingsCount)
+    elif source["type"] == "surface":
+        for surface in component["surfaces"]:
+            if surface["material"] not in materials: materials.append(surface["material"])
+            materialIndex = materials.index(surface["material"])
 
-                # split if mappingIndex is mid-point
-                if mappingIndexFirst != -1 and mappingIndexFirst != 0 and mappingIndexFirst != len(mappings) - 1:
-                    pt_details.append({
-                        "geometry": section["geometry"][:mappingIndexFirst + 1],
-                        "distances": distances[:mappingIndexFirst],
-                        "mappings": mappings[:mappingIndexFirst + 1],
-                        "mode": -1
-                    })
-                    pt_details.append({
-                        "geometry": section["geometry"][mappingIndexFirst:],
-                        "distances": distances[mappingIndexFirst:],
-                        "mappings": mappings[mappingIndexFirst:],
-                        "mode": 1
-                    })
-                else:
-                    pt_details.append({
-                        "geometry": section["geometry"],
-                        "distances": distances,
-                        "mappings": mappings,
-                        "mode": 0
-                    })
+            textureDetails = dict_materials[surface["material"]]
+            repeatFreq = textureDetails["dimX"]
+            zRepeatRate = 1 / textureDetails["dimZ"]
+            xStartRelative = ((offset + surface["x1"]) % repeatFreq) / repeatFreq
+            x1 = component["width"] - surface["x2"] if source['flip'] else surface["x1"]
+            x2 = component["width"] - surface["x1"] if source['flip'] else surface["x2"]
+            (pts, relativePosition) = tilingBetweenPoints(textureDetails, xStartRelative, {"x": x1}, {"x": x2}, offset, component["height"], False)
+            heightProfiles.append({"x1": x1, "x2": x2, "y1": component["height"], "y2": component["height"]})
+            output_pnts += output_points(pts, zRepeatRate, materialIndex)
 
-                pass
-                if section["material"] not in materials: materials.append(section["material"])
-                materialIndex = materials.index(section["material"])
-                output_pnts += textureMappingComplex(pt_details, dict_materials[section["material"]], materialIndex, offset)
+    else:
+        warnings.warn(
+            f"invalid use of component type ({source['type']}) for component {source['name']}. Skipping")
 
-        case "surface":
-            for surface in component["surfaces"]:
-                if surface["material"] not in materials: materials.append(surface["material"])
-                materialIndex = materials.index(surface["material"])
-
-                textureDetails = dict_materials[surface["material"]]
-                repeatFreq = textureDetails["dimX"]
-                zRepeatRate = 1 / textureDetails["dimZ"]
-                xStartRelative = ((offset + surface["x1"]) % repeatFreq) / repeatFreq
-                (pts, relativePosition) = tilingBetweenPoints(textureDetails, xStartRelative, {"x": surface["x1"]}, {"x": surface["x2"]}, offset, component["height"], False)
-                output_pnts += output_points(pts, zRepeatRate, materialIndex)
-
-        case _:
-            warnings.warn(
-                f"invalid use of component type ({component['type']}) for component {component['name']}. Skipping")
-            pass
-
-    return output_pnts, materials, paths, lines, offset, offset + component["width"]
+    return output_pnts, materials, paths, lines, heightProfiles, offset, offset + component["width"]
 
 def format_lines(centre, height, lineDetails, materialIndex):
     line_height_offset = 0.01

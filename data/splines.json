@@ -3,10 +3,20 @@
         "centre": {
             "type": "surface",
             "name": "12m-/:\\",
-            "orientation": 1,
+            "flip": 0,
             "offset": 0
         },
         "left": [
+            {
+                "type": "surface",
+                "name": "2m-grass",
+                "flip": 0
+            },
+            {
+                "type": "piece",
+                "name": "gutter",
+                "flip": 1
+            },
             {
                 "type": "surface",
                 "name": "3m-shoulderlane",
@@ -30,6 +40,14 @@
                 "flip": 0
             }
             ],
-        "decorations": [{"piece": "", "x": 0, "y": 0}]
+        "decorations": [
+            {
+                "type": "decoration",
+                "name": "tunnelTest",
+                "x": 0,
+                "y": 0.1,
+                "flip": 0
+            }
+        ]
     } 
 }
