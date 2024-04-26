@@ -40,14 +40,6 @@
                 "flip": 0
             }
             ],
-        "decorations": [
-            {
-                "type": "decoration",
-                "name": "tunnelTest",
-                "x": 0,
-                "y": 0.1,
-                "flip": 0
-            }
-        ]
+        "decorations": []
     } 
 }

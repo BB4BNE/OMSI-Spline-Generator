@@ -11,6 +11,7 @@ def path_directions(label, flipped):
     warnings.warn(f"invalid direction {label}. Using 0 (forward).")
     return 0
 
+
 def path_type(label):
     match label:
         case "road":
