@@ -8,18 +8,35 @@ json_decorations = json.load(open("data/decorations.json"))
 json_surfaces = json.load(open("data/surfaces.json"))
 
 
+def xPosSort(ptArray):
+    return ptArray['x1']
+
+
+def xPosSort1(ptArray):
+    return ptArray['pathX']
+
 # Generate Formatted [path] tag sections of .sli files
 def format_paths(paths):
     output = "\n\n#### PATHS ####"
+    pathGroupSorted = []
     for pathGroup in paths:
         for path in pathGroup["paths"]:
-            output += "\n\n[path]\n"
-            output += f"{path_type(path['type'])}\n"
-            pathX = pathGroup['width'] - path['x'] if pathGroup["flipped"] else path['x']
-            output += f"{(pathX + pathGroup['offset']):.3f}\n"
-            output += f"{pathGroup['height']:.3f}\n"
-            output += f"{path['width']:.2f}\n"
-            output += f"{path_directions(path['direction'], pathGroup['flipped'])}\n"
+            pathGroupSorted.append({
+                'type': path_type(path['type']),
+                'pathX': (pathGroup['width'] - path['x'] if pathGroup["flipped"] else path['x']) + + pathGroup['offset'],
+                'height': pathGroup['height'],
+                'width': pathGroup['width'],
+                'direction': path_directions(path['direction'], pathGroup['flipped'])
+            })
+    pathGroupSorted.sort(key=xPosSort1)
+    print("test")
+    for pathSorted in pathGroupSorted:
+        output += "\n\n[path]\n"
+        output += f"{pathSorted['type']}\n"
+        output += f"{pathSorted['pathX']:.3f}\n"
+        output += f"{pathSorted['height']:.3f}\n"
+        output += f"{pathSorted['width']:.2f}\n"
+        output += f"{pathSorted['direction']}\n"
     return output
 
 
@@ -191,8 +208,6 @@ def textureMappingComplex(pt_details, textureDetails, materialIndex, offset = {"
             counter += 1
     return output_points(points, zRepeatRate, materialIndex)
 
-def xPosSort(ptArray):
-    return ptArray['x1']
 
 def complexComponentBreakdown(component, dict_materials, materials, offset, flip):
     pt_details = []
