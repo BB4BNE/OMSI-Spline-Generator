@@ -191,6 +191,8 @@ def textureMappingComplex(pt_details, textureDetails, materialIndex, offset = {"
             counter += 1
     return output_points(points, zRepeatRate, materialIndex)
 
+def xPosSort(ptArray):
+    return ptArray['x1']
 
 def complexComponentBreakdown(component, dict_materials, materials, offset, flip):
     pt_details = []
@@ -298,7 +300,10 @@ def process_components(source, dict_materials, materials, paths, lines, heightPr
             x1 = component["width"] - surface["x2"] if source['flip'] else surface["x1"]
             x2 = component["width"] - surface["x1"] if source['flip'] else surface["x2"]
             (pts, relativePosition) = tilingBetweenPoints(textureDetails, xStartRelative, {"x": x1}, {"x": x2}, offset, component["height"], False)
-            heightProfiles.append({"x1": x1, "x2": x2, "y1": component["height"], "y2": component["height"]})
+            if x1 >= x2:
+                warnings.warn(f"Invalid data for heightProfile: x1: {x1}, x2: {x2}")
+            else:
+                heightProfiles.append({"x1": x1 + offset, "x2": x2 + offset, "y1": component["height"], "y2": component["height"]})
             output_pnts += output_points(pts, zRepeatRate, materialIndex)
 
     else:

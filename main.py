@@ -69,7 +69,40 @@ for spline in json_splines:
 
     # Generate Height Profiles
     output_heightprofiles = "\n#### Height Profiles ####\n"
-    for pair in heightProfiles:
+    heightProfiles.sort(key=xPosSort)
+    newHeightProfiles = []
+    index1 = 0
+    index2 = 1
+    skip = False
+    print(heightProfiles)
+    while index2 < len(heightProfiles):
+        if heightProfiles[index1]["y2"] == heightProfiles[index2]["y1"] and heightProfiles[index1]["y1"] == heightProfiles[index2]["y2"]:
+            if heightProfiles[index2 - 1]["x2"] == heightProfiles[index2]["x1"]:
+                skip = True
+            else:
+                skip = False
+        else:
+            skip = False
+        if not skip:
+            newHeightProfiles.append({
+                'x1': heightProfiles[index1]["x1"],
+                'x2': heightProfiles[index2 - 1]["x2"],
+                'y1': heightProfiles[index1]["y1"],
+                'y2': heightProfiles[index2 - 1]["y2"]
+            })
+            index1 = index2
+
+        if index2 + 1 == len(heightProfiles):
+            newHeightProfiles.append({
+                'x1': heightProfiles[index2]["x1"],
+                'x2': heightProfiles[index2]["x2"],
+                'y1': heightProfiles[index2]["y1"],
+                'y2': heightProfiles[index2]["y2"]
+            })
+
+        index2 += 1
+
+    for pair in newHeightProfiles:
         output_heightprofiles += "[heightprofile]\n"
         output_heightprofiles += f"{pair['x1']:.3f}\n"
         output_heightprofiles += f"{pair['x2']:.3f}\n"
