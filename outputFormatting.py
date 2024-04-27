@@ -43,12 +43,15 @@ def format_paths(paths):
 def output_points(points, tiling, materialIndex):
     output = "\n[profile]\n"
     output += f"{materialIndex}\n"
+    lastPoint = []
     for point in points:
+        if point == lastPoint: continue
         output += "\n[profilepnt]\n"
         output += f"{point['xPosition']:.3f}\n"
         output += f"{point['yPosition']:.3f}\n"
         output += f"{(round(point['relativePosition'],3) + 0.0):.3f}\n"
         output += f"{tiling:.4f}\n"
+        lastPoint = point
     return output
 
 
