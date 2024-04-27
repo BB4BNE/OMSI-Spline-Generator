@@ -2,10 +2,12 @@ from enums import *
 import math
 import json
 
+from config import json_dir, input_json_pieces, input_json_decorations, input_json_surfaces
+
 # load JSON files
-json_pieces = json.load(open("data/pieces.json"))
-json_decorations = json.load(open("data/decorations.json"))
-json_surfaces = json.load(open("data/surfaces.json"))
+json_pieces = json.load(open(json_dir + input_json_pieces))
+json_decorations = json.load(open(json_dir + input_json_decorations))
+json_surfaces = json.load(open(json_dir + input_json_surfaces))
 
 
 def xPosSort(ptArray):

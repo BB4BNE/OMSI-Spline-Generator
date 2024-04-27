@@ -1,25 +1,24 @@
 from outputFormatting import *
 
 from datetime import datetime
-
-output_dir = "O:/SteamLibrary/steamapps/common/OMSI 2/Splines/BB4BNE/generated"
-excel_input = "C:/OneDrive/BB4BNE Working/OMSI/RoadSplineDetails.xlsx"
+from config import (output_dir, input_excel, json_dir, input_json_spline, excel_sheet_lines, excel_sheet_lines_key,
+                    excel_sheet_materials, excel_sheet_materials_key)
 
 # load Excel tables
 # https://stackoverflow.com/questions/14196013/python-creating-dictionary-from-excel-data
 from pandas import *
 
 try:
-    open(excel_input)
+    open(input_excel)
 except PermissionError as e:
     raise Exception("##### - Excel file in use - #####") from e
 else:
-    xls = ExcelFile(excel_input)
-    dict_lines = xls.parse("Lines").set_index('LineName').to_dict('index')
-    dict_materials = xls.parse("Materials").set_index('MaterialName').to_dict('index')
+    xls = ExcelFile(input_excel)
+    dict_lines = xls.parse(excel_sheet_lines).set_index(excel_sheet_lines_key).to_dict('index')
+    dict_materials = xls.parse(excel_sheet_materials).set_index(excel_sheet_materials_key).to_dict('index')
 
 # load JSON files
-json_splines = json.load(open("data/splines.json"))
+json_splines = json.load(open(json_dir + input_json_spline))
 
 for spline in json_splines:
     output = "#### BB4BNE SPLINE GENERATOR ####\n\n"
@@ -74,7 +73,6 @@ for spline in json_splines:
     index1 = 0
     index2 = 1
     skip = False
-    print(heightProfiles)
     while index2 < len(heightProfiles):
         if heightProfiles[index1]["y2"] == heightProfiles[index2]["y1"] and heightProfiles[index1]["y1"] == heightProfiles[index2]["y2"]:
             if heightProfiles[index2 - 1]["x2"] == heightProfiles[index2]["x1"]:
