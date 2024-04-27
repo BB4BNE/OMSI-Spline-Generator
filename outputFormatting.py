@@ -213,8 +213,11 @@ def textureMappingComplex(pt_details, textureDetails, materialIndex, offset = {"
 def complexComponentBreakdown(component, dict_materials, materials, offset, flip):
     pt_details = []
     for section in component["sections"]:
+        if "orientation" in section:
+            orientation = section["orientation"] == 1
+            if orientation:
+                flip = not flip
         distances, newGeometry, mappings, mappingIndexFirst, mappingsCount = calc_distances(section["geometry"], component["width"], True, flip)
-
         # split if mappingIndex is mid-point
         if mappingIndexFirst != -1 and mappingIndexFirst != 0 and mappingIndexFirst != len(mappings) - 1:
             pt_details.append({
@@ -243,10 +246,12 @@ def complexComponentBreakdown(component, dict_materials, materials, offset, flip
         return textureMappingComplex(pt_details, dict_materials[section["material"]], materialIndex, offset)
 
 
-def process_components(source, dict_materials, materials, paths, lines, heightProfiles, mode, offset):
+def process_components(source, dict_materials, materials, paths, lines, heightProfiles, groupFlipStatus, mode, offset):
     output_pnts = ""
 
+    groupFlip = groupFlipStatus == 1
     flip = source["flip"] == 1
+    if groupFlip: flip = not flip
 
     match source["type"]:
         case "piece":
@@ -313,8 +318,8 @@ def process_components(source, dict_materials, materials, paths, lines, heightPr
             repeatFreq = textureDetails["dimX"]
             zRepeatRate = 1 / textureDetails["dimZ"]
             xStartRelative = ((offset + surface["x1"]) % repeatFreq) / repeatFreq
-            x1 = component["width"] - surface["x2"] if source['flip'] else surface["x1"]
-            x2 = component["width"] - surface["x1"] if source['flip'] else surface["x2"]
+            x1 = component["width"] - surface["x2"] if flip else surface["x1"]
+            x2 = component["width"] - surface["x1"] if flip else surface["x2"]
             y_offset = component["height"] + (surface["offset"] if "offset" in surface else 0)
             (pts, relativePosition) = tilingBetweenPoints(textureDetails, xStartRelative, {"x": x1}, {"x": x2}, offset, y_offset, False)
             if x1 >= x2:

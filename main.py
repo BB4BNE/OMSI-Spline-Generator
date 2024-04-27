@@ -43,14 +43,26 @@ for spline in _templates_splines:
         left = list(reversed(_templates_splines[spline]["left"]))
         right = _templates_splines[spline]["right"]
 
-        (output_pnts, materials, paths, lines, heightProfiles, xLeft, xRight) = process_components(centre, dict_materials, materials, paths, lines, heightProfiles, 0, centre["offset"])
+        (output_pnts, materials, paths, lines, heightProfiles, xLeft, xRight) = (
+            process_components(centre, dict_materials, materials, paths, lines, heightProfiles,
+                               0, 0, centre["offset"]))
 
-        for component in left:
-            (output_pnts_body, materials, paths, lines, heightProfiles, xLeft, _) = process_components(component, dict_materials, materials, paths, lines, heightProfiles, -1, xLeft)
-            output_pnts = output_pnts_body + output_pnts
-        for component in right:
-            (output_pnts_body, materials, paths, lines, heightProfiles, _, xRight) = process_components(component, dict_materials, materials, paths, lines, heightProfiles, 1, xRight)
-            output_pnts += output_pnts_body
+        for componentGroup in left:
+            groupFlip = componentGroup["flip"] == 1 if "flip" in componentGroup else False
+            if "component" not in componentGroup: continue
+            for component in componentGroup["component"]:
+                (output_pnts_body, materials, paths, lines, heightProfiles, xLeft, _) = (
+                    process_components(component, dict_materials, materials, paths, lines, heightProfiles,
+                    groupFlip, -1, xLeft))
+                output_pnts = output_pnts_body + output_pnts
+        for componentGroup in right:
+            groupFlip = componentGroup["flip"] == 1 if "flip" in componentGroup else False
+            if "component" not in componentGroup: continue
+            for component in componentGroup["component"]:
+                (output_pnts_body, materials, paths, lines, heightProfiles, _, xRight) = process_components(
+                    component, dict_materials, materials, paths, lines, heightProfiles,
+                    groupFlip, 1, xRight)
+                output_pnts += output_pnts_body
 
     # output results
     output_lines = "\n#### LINES ####\n"
@@ -65,10 +77,10 @@ for spline in _templates_splines:
     decorations = _templates_splines[spline]["decorations"]
     output_decoration_header = "\n#### DECORATIONS ####\n"
     output_decoration = ""
-    for component in decorations:
-        (output_pnts_body, materials, _, _, _, _, _) = process_components(component, dict_materials,
-                                                                       materials, [], [], [],3,
-                                                                       0)
+    for componentGroup in decorations:
+        (output_pnts_body, materials, _, _, _, _, _) = process_components(componentGroup, dict_materials,
+                                                                          materials, [], [], [],
+                                                                          0, 3, 0)
         output_decoration += output_pnts_body
 
     # Generate Height Profiles
@@ -127,8 +139,6 @@ for spline in _templates_splines:
         output_materials += "[matl_alpha]\n"
         output_materials += f"{materialDetails['Alpha'][0]}\n\n"
 
-
-
     # check if paths is right
     output_paths = format_paths(paths) if len(paths) > 0 else ""
     output += output_heightprofiles
@@ -143,7 +153,6 @@ for spline in _templates_splines:
     sli = open(output_dir + "/" + fileName + ".sli", "w")
     sli.write(output)
     sli.close()
-
 
 now = datetime.now()
 current_time = now.strftime("%H:%M:%S")

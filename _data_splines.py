@@ -11,10 +11,10 @@ _templates_splines = {
         },
         "left": (
                 [] +
-                _template_subs_components["Left|GS-V03.75G-P01.00C@01.75"]
+                [{"component": _template_subs_components["GS-V03.75G-P01.00C@01.75"], "flip": 1}]
         ),
         "right": (
-                _template_subs_components["Right|GS-V03.75G-P01.00C@01.75"] +
+                [{"component": _template_subs_components["GS-V03.75G-P01.00C@01.75"], "flip": 0}] +
                 []
         ),
         "decorations": (
@@ -31,10 +31,10 @@ _templates_splines = {
         },
         "left": (
                 [] +
-                _template_subs_components["Left|GS-V03.75G-P01.00C@01.75"]
+                [{"component": _template_subs_components["GS-V03.75G-P01.00C@01.75"], "flip": 1}]
         ),
         "right": (
-                _template_subs_components["Right|GS-V03.75G-P01.00C@01.75"] +
+                [{"component": _template_subs_components["GS-V03.75G-P01.00C@01.75"], "flip": 0}] +
                 []
         ),
         "decorations": (
@@ -51,10 +51,10 @@ _templates_splines = {
         },
         "left": (
                 [] +
-                _template_subs_components["Left|GS-V03.75G-P01.00C@01.75"]
+                [{"component": _template_subs_components["GS-V03.75G-P01.00C@01.75"], "flip": 1}]
         ),
         "right": (
-                _template_subs_components["Right|GS-V03.75G-P01.00C@01.75"] +
+                [{"component": _template_subs_components["GS-V03.75G-P01.00C@01.75"], "flip": 0}] +
                 []
         ),
         "decorations": (
