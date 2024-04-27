@@ -21,6 +21,10 @@ else:
 json_splines = json.load(open(json_dir + input_json_spline))
 
 for spline in json_splines:
+    if "inhibit" in json_splines[spline] and json_splines[spline]["inhibit"] == 1:
+        print(f"skipping spline: {spline}")
+        continue
+
     output = "#### BB4BNE SPLINE GENERATOR ####\n\n"
 
     # create file level arrays
