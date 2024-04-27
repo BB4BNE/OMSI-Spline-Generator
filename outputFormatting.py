@@ -317,7 +317,8 @@ def process_components(source, dict_materials, materials, paths, lines, heightPr
             xStartRelative = ((offset + surface["x1"]) % repeatFreq) / repeatFreq
             x1 = component["width"] - surface["x2"] if source['flip'] else surface["x1"]
             x2 = component["width"] - surface["x1"] if source['flip'] else surface["x2"]
-            (pts, relativePosition) = tilingBetweenPoints(textureDetails, xStartRelative, {"x": x1}, {"x": x2}, offset, component["height"], False)
+            y_offset = component["height"] + (surface["offset"] if "offset" in surface else 0)
+            (pts, relativePosition) = tilingBetweenPoints(textureDetails, xStartRelative, {"x": x1}, {"x": x2}, offset, y_offset, False)
             if x1 >= x2:
                 warnings.warn(f"Invalid data for heightProfile: x1: {x1}, x2: {x2}")
             else:
