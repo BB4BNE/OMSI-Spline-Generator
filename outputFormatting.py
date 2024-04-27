@@ -23,13 +23,12 @@ def format_paths(paths):
         for path in pathGroup["paths"]:
             pathGroupSorted.append({
                 'type': path_type(path['type']),
-                'pathX': (pathGroup['width'] - path['x'] if pathGroup["flipped"] else path['x']) + + pathGroup['offset'],
+                'pathX': ((pathGroup['width'] - path['x']) if pathGroup["flipped"] else path['x']) + pathGroup['offset'],
                 'height': pathGroup['height'],
-                'width': pathGroup['width'],
+                'width': path['width'],
                 'direction': path_directions(path['direction'], pathGroup['flipped'])
             })
     pathGroupSorted.sort(key=xPosSort1)
-    print("test")
     for pathSorted in pathGroupSorted:
         output += "\n\n[path]\n"
         output += f"{pathSorted['type']}\n"
@@ -197,7 +196,6 @@ def textureMappingComplex(pt_details, textureDetails, materialIndex, offset = {"
             index = 0
             distance = sum(pt_details[index]["distances"])
             relativePosition = referenceRelative - (distance / repeatFreq)
-
         # forward mode
         else:
             index = -1
