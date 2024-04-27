@@ -1,36 +1,38 @@
 {
-    "_sampleSurface": {
+    "R12.0L4{;II;}": {
         "width": 12,
         "height": 0.1,
         "surfaces": [
-            {"x1": 0, "x2": 12, "mapping": null, "material": "blah"}
+            {"x1": 0, "x2": 12, "mapping": null, "material": "Road_Asphalt"}
         ],
         "lines": [
-            {"type": "road", "x": 0}
+            {"type": "Lane|Broken", "x": 2.9},
+            {"type": "Barrier|Both", "x": 6},
+            {"type": "Lane|Broken", "x": 9.1}
         ],
         "aiPaths": [
-            {"type": "road", "x": 0, "width": 1, "direction": "forward"}
-        ]
-    },
-    "12m-/:\\": {
-        "width": 12,
-        "height": 0.1,
-        "surfaces": [
-            {"x1": 0, "x2": 9, "mapping": null, "material": "Road_Asphalt"},
-            {"x1": 9, "x2": 12, "mapping": null, "material": "Road_Asphalt_Light"}
-        ],
-        "lines": [
-            {"type": "Lane Special", "x": 0},
-            {"type": "Lane Broken (Bus21m)", "x": 3},
-            {"type": "Barrier Double", "x": 6},
-            {"type": "Lane Broken (Standard)", "x": 9},
-            {"type": "Lane Broken (Standard)", "x": 12}
-        ],
-        "aiPaths": [
-            {"type": "road", "x": 1.35, "width": 3.1, "direction": "forward"},
+            {"type": "road", "x": 1.45, "width": 2.9, "direction": "forward"},
             {"type": "road", "x": 4.45, "width": 3.1, "direction": "forward"},
             {"type": "road", "x": 7.55, "width": 3.1, "direction": "reverse"},
-            {"type": "road", "x": 10.65, "width": 3.1, "direction": "reverse"}
+            {"type": "road", "x": 10.55, "width": 2.9, "direction": "reverse"}
+        ]
+    },
+    "R12.0L4@2{;II;}": {
+        "width": 12,
+        "height": 0.1,
+        "surfaces": [
+            {"x1": 0, "x2": 12, "mapping": null, "material": "Road_Asphalt"}
+        ],
+        "lines": [
+            {"type": "Lane|Broken", "x": 2.9},
+            {"type": "Barrier|Both", "x": 6},
+            {"type": "Lane|Broken", "x": 9.1}
+        ],
+        "aiPaths": [
+            {"type": "road", "x": 1.45, "width": 2.9, "direction": "forward"},
+            {"type": "road", "x": 4.45, "width": 3.1, "direction": "forward"},
+            {"type": "road", "x": 7.55, "width": 3.1, "direction": "reverse"},
+            {"type": "road", "x": 10.55, "width": 2.9, "direction": "reverse"}
         ]
     },
     "3m-shoulderlane": {
@@ -59,15 +61,16 @@
             {"type": "road", "x": 1.5, "width": 3, "direction": "reverse"}
         ]
     },
-    "2m-grass": {
-        "width": 2,
+    "V03.75G-P01.00C@01.75": {
+        "width": 3.75,
         "height": 0.25,
         "surfaces": [
-            {"x1": 0, "x2": 2, "mapping": null, "material": "Grass"}
+            {"x1": 0, "x2": 3.75, "mapping": null, "material": "Grass", "offset": 0},
+            {"x1": 1.75, "x2": 2.75, "mapping": null, "material": "FootpathConcrete", "offset": 0.05}
         ],
         "lines": [],
         "aiPaths": [
-            {"type": "pedestrian", "x": 1, "width": 2, "direction": "both"}
+            {"type": "pedestrian", "x": 2.25, "width": 1, "direction": "both"}
         ]
     }
 }

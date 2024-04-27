@@ -1,34 +1,25 @@
 {
-    "_sampleSplinePiece": {
+    "R12.0L4{;II;}[VP-VP]": {
+        "inhibit": 0,
         "centre": {
             "type": "surface",
-            "name": "12m-/:\\",
+            "name": "R12.0L4{;II;}",
             "flip": 0,
             "offset": 0
         },
         "left": [
             {
                 "type": "surface",
-                "name": "2m-grass",
-                "flip": 0
+                "name": "V03.75G-P01.00C@01.75",
+                "flip": 1
             },
             {
                 "type": "piece",
                 "name": "gutter",
                 "flip": 1
-            },
-            {
-                "type": "surface",
-                "name": "3m-shoulderlane",
-                "flip": 0
             }
             ],
         "right": [
-            {
-                "type": "surface",
-                "name": "3m-shoulderlane-dark",
-                "flip": 0
-            },
             {
                 "type": "piece",
                 "name": "gutter",
@@ -36,7 +27,7 @@
             },
             {
                 "type": "surface",
-                "name": "2m-grass",
+                "name": "V03.75G-P01.00C@01.75",
                 "flip": 0
             }
             ],
