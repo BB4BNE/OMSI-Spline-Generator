@@ -246,7 +246,7 @@ def complexComponentBreakdown(component, dict_materials, materials, offset, flip
         return textureMappingComplex(pt_details, dict_materials[section["material"]], materialIndex, offset)
 
 
-def process_components(source, dict_materials, materials, paths, lines, heightProfiles, groupFlipStatus, mode, offset):
+def process_components(source, dict_materials, materials, paths, lines, heightProfiles, groupFlipStatus, mode, inputOffset):
     output_pnts = ""
 
     groupFlip = groupFlipStatus == 1
@@ -262,32 +262,38 @@ def process_components(source, dict_materials, materials, paths, lines, heightPr
             component = _template_decorations[source['name']]
         case _:
             warnings.warn(f"invalid use of component type ({source['type']}) for component {source['name']}. Skipping")
-            return materials, paths, lines, heightProfiles, offset, offset
+            return materials, paths, lines, heightProfiles, inputOffset, inputOffset
 
+    referencePointOffset = -component['referencePointOffset'] if 'referencePointOffset' in component else 0
 
     component["height"] = component["height"] if "height" in component else 0
+    component["width"] = component["width"] if "width" in component else 0
+
     y_offset = (source["y"] if "y" in source else 0) + component["height"]
     x_offset = source["x"] if "x" in source else 0
 
     # move pointer to left bound of object
-    if mode == 0:
-        # middle
-        offset += -component["width"] / 2
-        offset2 = offset
-    elif mode == 1:
-        # right
-        offset2 = offset
-        offset += 0
-    elif mode == 3:
+    offset = inputOffset
+    if mode == 3:
         # decorations
         offset = x_offset
-        offset2 = x_offset
-        component["width"] = 0
-    else:
+    elif mode == 0:
+        # middle
+        offset = referencePointOffset + inputOffset
+        offset_left = offset - component["width"] / 2
+        offset_right = offset + component["width"] / 2
+    elif mode == 1:
+        # right
+        offset_left = inputOffset
+        offset_right = inputOffset + component["width"]
+        offset += component["width"] / 2 - referencePointOffset
+    elif mode == -1:
         # left (-1)
-        #   offset2 = offset + component["width"] * mode
-        offset += component["width"] * mode
-        offset2 = offset
+        offset_right = inputOffset
+        offset_left = inputOffset - component["width"]
+        offset -= ((component["width"] / 2) + referencePointOffset)
+    else:
+        warnings.warn(f"Pointer mode {mode} is not defined.")
 
     if "aiPaths" in component:
         paths.append({
@@ -295,7 +301,7 @@ def process_components(source, dict_materials, materials, paths, lines, heightPr
             "height": component["height"],
             "width": component["width"],
             "flipped": flip,
-            "offset": offset2
+            "offset": offset
         })
     if "lines" in component:
         lines.append({
@@ -303,7 +309,7 @@ def process_components(source, dict_materials, materials, paths, lines, heightPr
             "height": component["height"],
             "width": component["width"],
             "flipped": flip,
-            "offset": offset2
+            "offset": offset
         })
 
     # Switch. Process different types
@@ -319,10 +325,11 @@ def process_components(source, dict_materials, materials, paths, lines, heightPr
             repeatFreq = textureDetails["dimX"]
             zRepeatRate = 1 / textureDetails["dimZ"]
             xStartRelative = ((offset + surface["x1"]) % repeatFreq) / repeatFreq
-            x1 = component["width"] - surface["x2"] if flip else surface["x1"]
-            x2 = component["width"] - surface["x1"] if flip else surface["x2"]
+            x1 = -(surface["x2"] + referencePointOffset) + referencePointOffset if flip else surface["x1"]
+            x2 = -(surface["x1"] + referencePointOffset) + referencePointOffset if flip else surface["x2"]
+            surfaceOffset = offset + (component["width"] if flip else 0)
             y_offset = component["height"] + (surface["offset"] if "offset" in surface else 0)
-            (pts, relativePosition) = tilingBetweenPoints(textureDetails, xStartRelative, {"x": x1}, {"x": x2}, offset, y_offset, False)
+            (pts, relativePosition) = tilingBetweenPoints(textureDetails, xStartRelative, {"x": x1}, {"x": x2}, surfaceOffset, y_offset, False)
             if x1 >= x2:
                 warnings.warn(f"Invalid data for heightProfile: x1: {x1}, x2: {x2}")
             else:
@@ -333,7 +340,7 @@ def process_components(source, dict_materials, materials, paths, lines, heightPr
         warnings.warn(
             f"invalid use of component type ({source['type']}) for component {source['name']}. Skipping")
 
-    return output_pnts, materials, paths, lines, heightProfiles, offset, offset + component["width"]
+    return output_pnts, materials, paths, lines, heightProfiles, offset_left, offset_right
 
 def format_lines(centre, height, lineDetails, materialIndex):
     line_height_offset = 0.01

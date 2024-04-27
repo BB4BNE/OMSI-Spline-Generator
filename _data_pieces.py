@@ -5,6 +5,7 @@ from _data_subs_sections import _template_subs_sections
 _template_pieces = {
     "gutter": {
         "width": 0.5,
+        "referencePointOffset": -0.25,
         "sections": [
             {
             "material": "GutterA",
