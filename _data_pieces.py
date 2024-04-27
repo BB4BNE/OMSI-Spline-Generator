@@ -9,8 +9,14 @@ _template_pieces = {
             {
             "material": "GutterA",
             "orientation": 0,
-            "geometry": _template_sub_geometery["Piece|Gutter-Standard"]
-        }],
+            "geometry":
+                [
+                    {"x": 0.000, "y": 0.100, "mapping": None},
+                    {"x": 0.350, "y": 0.100, "mapping": 0.5},
+                    {"x": 0.350, "y": 0.250, "mapping": None},
+                    {"x": 0.500, "y": 0.250, "mapping": None}
+                ]
+            }],
         "aipath": []
     }    
 }

@@ -264,6 +264,7 @@ def process_components(source, dict_materials, materials, paths, lines, heightPr
             warnings.warn(f"invalid use of component type ({source['type']}) for component {source['name']}. Skipping")
             return materials, paths, lines, heightProfiles, offset, offset
 
+    print(source)
     component["height"] = component["height"] if "height" in component else 0
     y_offset = (source["y"] if "y" in source else 0) + component["height"]
     x_offset = source["x"] if "x" in source else 0
