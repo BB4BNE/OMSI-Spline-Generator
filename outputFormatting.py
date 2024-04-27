@@ -2,13 +2,10 @@ from enums import *
 import math
 import json
 
-from config import json_dir, input_json_pieces, input_json_decorations, input_json_surfaces
-
-# load JSON files
-json_pieces = json.load(open(json_dir + input_json_pieces))
-json_decorations = json.load(open(json_dir + input_json_decorations))
-json_surfaces = json.load(open(json_dir + input_json_surfaces))
-
+# load data
+from _data_pieces import _template_pieces
+from _data_decorations import _template_decorations
+from _data_surfaces import _template_surfaces
 
 def xPosSort(ptArray):
     return ptArray['x1']
@@ -253,11 +250,11 @@ def process_components(source, dict_materials, materials, paths, lines, heightPr
 
     match source["type"]:
         case "piece":
-            component = json_pieces[source['name']]
+            component = _template_pieces[source['name']]
         case "surface":
-            component = json_surfaces[source['name']]
+            component = _template_surfaces[source['name']]
         case "decoration":
-            component = json_decorations[source['name']]
+            component = _template_decorations[source['name']]
         case _:
             warnings.warn(f"invalid use of component type ({source['type']}) for component {source['name']}. Skipping")
             return materials, paths, lines, heightProfiles, offset, offset

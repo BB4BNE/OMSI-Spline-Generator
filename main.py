@@ -2,9 +2,11 @@ from chatgpt import remove_invalid_windows_chars
 from outputFormatting import *
 
 from datetime import datetime
-from config import (output_dir, input_excel, json_dir, input_json_spline, excel_sheet_lines, excel_sheet_lines_key,
+from config import (output_dir, input_excel, excel_sheet_lines, excel_sheet_lines_key,
                     excel_sheet_materials, excel_sheet_materials_key)
-import re
+
+# load data
+from _data_splines import _templates_splines
 
 # load Excel tables
 # https://stackoverflow.com/questions/14196013/python-creating-dictionary-from-excel-data
@@ -19,11 +21,8 @@ else:
     dict_lines = xls.parse(excel_sheet_lines).set_index(excel_sheet_lines_key).to_dict('index')
     dict_materials = xls.parse(excel_sheet_materials).set_index(excel_sheet_materials_key).to_dict('index')
 
-# load JSON files
-json_splines = json.load(open(json_dir + input_json_spline))
-
-for spline in json_splines:
-    if "inhibit" in json_splines[spline] and json_splines[spline]["inhibit"] == 1:
+for spline in _templates_splines:
+    if "inhibit" in _templates_splines[spline] and _templates_splines[spline]["inhibit"] == 1:
         print(f"skipping spline: {spline}")
         continue
 
@@ -35,14 +34,14 @@ for spline in json_splines:
     lines = []
     heightProfiles = []
 
-    centre = json_splines[spline]["centre"]
+    centre = _templates_splines[spline]["centre"]
     # Process Centre
     if centre["type"] != "decoration":
 
         output_pnts_header = "\n#### POINTS ####\n"
 
-        left = list(reversed(json_splines[spline]["left"]))
-        right = json_splines[spline]["right"]
+        left = list(reversed(_templates_splines[spline]["left"]))
+        right = _templates_splines[spline]["right"]
 
         (output_pnts, materials, paths, lines, heightProfiles, xLeft, xRight) = process_components(centre, dict_materials, materials, paths, lines, heightProfiles, 0, centre["offset"])
 
@@ -63,7 +62,7 @@ for spline in json_splines:
             lineX = lineGroup['width'] - line['x'] if lineGroup["flipped"] else line['x']
             output_lines += format_lines(lineX + lineGroup["offset"], lineGroup["height"], lineDetails, materialIndex)
 
-    decorations = json_splines[spline]["decorations"]
+    decorations = _templates_splines[spline]["decorations"]
     output_decoration_header = "\n#### DECORATIONS ####\n"
     output_decoration = ""
     for component in decorations:
