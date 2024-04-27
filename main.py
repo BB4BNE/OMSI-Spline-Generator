@@ -1,8 +1,10 @@
+from chatgpt import remove_invalid_windows_chars
 from outputFormatting import *
 
 from datetime import datetime
 from config import (output_dir, input_excel, json_dir, input_json_spline, excel_sheet_lines, excel_sheet_lines_key,
                     excel_sheet_materials, excel_sheet_materials_key)
+import re
 
 # load Excel tables
 # https://stackoverflow.com/questions/14196013/python-creating-dictionary-from-excel-data
@@ -137,7 +139,9 @@ for spline in json_splines:
     output += output_decoration_header + output_decoration
     output += output_paths
 
-    sli = open(output_dir + "/test.sli", "w")
+    fileName = remove_invalid_windows_chars(spline)
+
+    sli = open(output_dir + "/" + fileName + ".sli", "w")
     sli.write(output)
     sli.close()
 
