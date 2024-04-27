@@ -107,7 +107,8 @@ def checkMapping(point):
             return True
     return False
 
-def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, x_offset, y_offset, y=False):
+
+def tilingBetweenPoints(textureDetails, uvStart, point1, point2, x_offset, y_offset, y=False):
     output_pts = []
     xPosCurrent = point1["x"] + x_offset
     xPosEnd = point2["x"] + x_offset
@@ -120,30 +121,30 @@ def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, x_offset
         if checkMapping(point2):
             # true + true
             repeatFreq = distanceToGo
-            xRelativeCurrent = point1["mapping"]
-            xRelativeEnd = point2["mapping"]
+            uvCurrent = point1["mapping"]
+            uvEnd = point2["mapping"]
         else:
             # true + false
             repeatFreq = textureDetails["dimX"]
-            xRelativeCurrent = point1["mapping"]
-            xRelativeEnd = distanceToGo / repeatFreq + xRelativeCurrent
+            uvCurrent = point1["mapping"]
+            uvEnd = distanceToGo / repeatFreq + uvCurrent
     else:
         if checkMapping(point2):
             # false + true
             repeatFreq = textureDetails["dimX"]
-            xRelativeEnd = point2["mapping"]
-            xRelativeCurrent = (xRelativeEnd - distanceToGo / repeatFreq) % 1
+            uvEnd = point2["mapping"]
+            uvCurrent = (uvEnd - distanceToGo / repeatFreq) % 1
         else:
             # false + false
             repeatFreq = textureDetails["dimX"]
-            xRelativeCurrent = xRelativeStart
-            xRelativeEnd = distanceToGo / repeatFreq + xRelativeCurrent
+            uvCurrent = uvStart
+            uvEnd = distanceToGo / repeatFreq + uvCurrent
 
-    output_pts.append({"xPosition": xPosCurrent, "yPosition": yPosCurrent, "relativePosition": xRelativeCurrent})
+    output_pts.append({"xPosition": xPosCurrent, "yPosition": yPosCurrent, "relativePosition": uvCurrent})
 
     # check if on same tile
-    if distanceToGo <= repeatFreq and xRelativeEnd <= 1 and xRelativeCurrent < xRelativeEnd:
-        output_pts.append({"xPosition": xPosEnd, "yPosition": yPosEnd, "relativePosition": xRelativeEnd})
+    if distanceToGo <= repeatFreq and uvEnd <= 1:
+        output_pts.append({"xPosition": xPosEnd, "yPosition": yPosEnd, "relativePosition": uvEnd})
     else:
         if textureDetails["TileableX"] != "Yes":
             warnings.warn("Tiling using non-tileable texture: " + textureDetails["Path"])
@@ -151,9 +152,10 @@ def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, x_offset
 
         # do while loop
         while True:
-            if xRelativeCurrent < 1:
-                distanceTravelled = repeatFreq * (1 - xRelativeCurrent)
-                xRelativeCurrent = 1
+            if uvCurrent < 1:
+                # do section of do... while
+                distanceTravelled = repeatFreq * (1 - uvCurrent)
+                uvCurrent = 1
             else:
                 output_pts.append(
                     {"xPosition": xPosCurrent, "yPosition": yPosCurrent, "relativePosition": 0})
@@ -166,18 +168,17 @@ def tilingBetweenPoints(textureDetails, xRelativeStart, point1, point2, x_offset
 
             output_pts.append(
                 {"xPosition": xPosCurrent, "yPosition": yPosCurrent, "relativePosition": 1})
+            if uvCurrent + 1 >= math.floor(uvEnd): break
 
-            if xRelativeCurrent + 1 >= math.floor(xRelativeEnd): break
-
-            xRelativeCurrent += 1
+            uvCurrent += 1
 
         # final Tile
         output_pts.append(
             {"xPosition": xPosCurrent, "yPosition": yPosCurrent, "relativePosition": 0})
-        xRelativeEnd = xRelativeEnd - xRelativeCurrent
+        uvEnd -= uvCurrent # as file tile difference is remaining tile
         output_pts.append(
-            {"xPosition": xPosEnd, "yPosition": yPosEnd, "relativePosition": xRelativeEnd})
-    return output_pts, xRelativeEnd
+            {"xPosition": xPosEnd, "yPosition": yPosEnd, "relativePosition": uvEnd})
+    return output_pts, uvEnd % 1
 
 
 def textureMappingComplex(pt_details, textureDetails, materialIndex, offset = {"x": 0,"y": 0}):
