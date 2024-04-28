@@ -9,7 +9,7 @@ _template_surfaces = {
                      _template_subs_surfaces["12m-asphalt"]
                      ),
         "lines": ([] +
-                  _template_subs_lines['R12.0L4{;II;}']
+                  _template_subs_lines['R12.0-L4{;II;}']
                   ),
         "aiPaths": ([] +
                     _template_subs_aipaths['R-L4-3.1-2.9']
@@ -23,7 +23,7 @@ _template_surfaces = {
                      _template_subs_surfaces["12m-asphalt"]
                      ),
         "lines": ([] +
-                  _template_subs_lines['R12.0L4{;II;}']
+                  _template_subs_lines['R12.0-L4{;II;}']
                   ),
         "aiPaths": ([] +
                     _template_subs_aipaths['R-L2-3.1']
@@ -37,7 +37,7 @@ _template_surfaces = {
                      _template_subs_surfaces["12m-asphalt"]
                      ),
         "lines": ([] +
-                  _template_subs_lines['R12.0L2{$II$}']
+                  _template_subs_lines['R12.0-L2{$II$}']
                   ),
         "aiPaths": ([] +
                     _template_subs_aipaths['R-L2-3.3']
@@ -57,6 +57,20 @@ _template_surfaces = {
                     _template_subs_aipaths['R-L2-3.3']
                     )
     },
+    "R08.5L2{}": {
+        "width": 8.5,
+        "referencePointOffset": 0,
+        "height": 0.1,
+        "surfaces": ([] +
+                     _template_subs_surfaces["8.5m-asphalt"]
+                     ),
+        "lines": (
+                []
+                  ),
+        "aiPaths": ([] +
+                    _template_subs_aipaths['R-L2-3.3']
+                    )
+    },
     "V03.75G-P01.00C@01.75": {
         "width": 3.75,
         "referencePointOffset": -1.875,
@@ -68,6 +82,57 @@ _template_surfaces = {
         "lines": [],
         "aiPaths": [
             {"type": "pedestrian", "x": 2.25, "width": 1, "direction": "both"}
+        ]
+    },
+    "V03.50-P-P03.00@-01.50": {
+        "width": 3.5,
+        "referencePointOffset": -1.750,
+        "height": 0.25,
+        "surfaces": [
+            {"x1": 0, "x2": 3.5, "mapping": None, "material": "FootpathConcrete", "offset": 0}
+        ],
+        "lines": [],
+        "aiPaths": [
+            {"type": "pedestrian", "x": 3.0, "width": 3, "direction": "both"}
+        ]
+    },
+    "V03.50-G-P01.00C@-01.50": {
+        "width": 3.5,
+        "referencePointOffset": -1.750,
+        "height": 0.25,
+        "surfaces": [
+            {"x1": 0, "x2": 3.5, "mapping": None, "material": "Grass", "offset": 0},
+            {"x1": 1.5, "x2": 2.5, "mapping": None, "material": "FootpathConcrete", "offset": 0.05}
+        ],
+        "lines": [],
+        "aiPaths": [
+            {"type": "pedestrian", "x": 3.0, "width": 1, "direction": "both"}
+        ]
+    },
+    "V04.50-G-P01.00C@-01.50": {
+        "width": 4.5,
+        "referencePointOffset": -2.250,
+        "height": 0.25,
+        "surfaces": [
+            {"x1": 0, "x2": 4.5, "mapping": None, "material": "Grass", "offset": 0},
+            {"x1": 2.5, "x2": 3.5, "mapping": None, "material": "FootpathConcrete", "offset": 0.05}
+        ],
+        "lines": [],
+        "aiPaths": [
+            {"type": "pedestrian", "x": 4.00, "width": 1, "direction": "both"}
+        ]
+    },
+    "V05.25-G-P01.00C@-01.50": {
+        "width": 5.25,
+        "referencePointOffset": -2.625,
+        "height": 0.25,
+        "surfaces": [
+            {"x1": 0, "x2": 5.25, "mapping": None, "material": "Grass", "offset": 0},
+            {"x1": 3.25, "x2": 4.25, "mapping": None, "material": "FootpathConcrete", "offset": 0.01}
+        ],
+        "lines": [],
+        "aiPaths": [
+            {"type": "pedestrian", "x": 4.75, "width": 1, "direction": "both"}
         ]
     }
 }
