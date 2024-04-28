@@ -4,9 +4,14 @@ _template_subs_components = {
             {"type": "piece", "name": "gutter", "flip": 0},
             {"type": "surface", "name": "V03.50-G-P01.00C@-01.50", "flip": 0}
         ],
-    "C05.75-V05.25G-PC01.00@01.50":
+    "C04.00-V03.50-P-P03.00@-01.50":
         [
             {"type": "piece", "name": "gutter", "flip": 0},
-            {"type": "surface", "name": "V05.25-G-P01.00C@-01.50", "flip": 0}
+            {"type": "surface", "name": "V03.50-P-P03.00@-01.50", "flip": 0}
+        ],
+    "C05.00-V04.50-G-P01.00C@-01.50":
+        [
+            {"type": "piece", "name": "gutter", "flip": 0},
+            {"type": "surface", "name": "V04.50-G-P01.00C@-01.50", "flip": 0}
         ]
 }

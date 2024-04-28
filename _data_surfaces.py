@@ -1,75 +1,37 @@
 from _data_subs import _template_subs_surfaces, _template_subs_aipaths, _template_subs_lines
 
 _template_surfaces = {
-    "R12.0L4{;II;}": {
+    "R12.0-L4": {
         "width": 12,
         "referencePointOffset": 0,
         "height": 0.1,
-        "surfaces": ([] +
-                     _template_subs_surfaces["12m-asphalt"]
-                     ),
-        "lines": ([] +
-                  _template_subs_lines['R12.0-L4{;II;}']
-                  ),
-        "aiPaths": ([] +
-                    _template_subs_aipaths['R-L4-3.1-2.9']
-                    )
+        "surfaces": ([] + _template_subs_surfaces["12m-asphalt"]),
+        "lines": ([]),
+        "aiPaths": ([] + _template_subs_aipaths['R-L4-3.1-2.9'])
     },
-    "R12.0L4@2{;II;}": {
+    "R12.0-L2": {
         "width": 12,
         "referencePointOffset": 0,
         "height": 0.1,
-        "surfaces": ([] +
-                     _template_subs_surfaces["12m-asphalt"]
-                     ),
-        "lines": ([] +
-                  _template_subs_lines['R12.0-L4{;II;}']
-                  ),
-        "aiPaths": ([] +
-                    _template_subs_aipaths['R-L2-3.1']
-                    )
+        "surfaces": ([] + _template_subs_surfaces["12m-asphalt"]),
+        "lines": ([]),
+        "aiPaths": ([] + _template_subs_aipaths['R-L2-3.1'])
     },
-    "R12.0L2{$II$}": {
-        "width": 12,
+    "R10.0-L2": {
+        "width": 10,
         "referencePointOffset": 0,
         "height": 0.1,
-        "surfaces": ([] +
-                     _template_subs_surfaces["12m-asphalt"]
-                     ),
-        "lines": ([] +
-                  _template_subs_lines['R12.0-L2{$II$}']
-                  ),
-        "aiPaths": ([] +
-                    _template_subs_aipaths['R-L2-3.3']
-                    )
+        "surfaces": ([] + _template_subs_surfaces["10m-asphalt"]),
+        "lines": ([]),
+        "aiPaths": ([] + _template_subs_aipaths['R-L2-3.1'])
     },
-    "R12.0L2{II}": {
-        "width": 12,
-        "referencePointOffset": 0,
-        "height": 0.1,
-        "surfaces": ([] +
-                     _template_subs_surfaces["12m-asphalt"]
-                     ),
-        "lines": ([] +
-                  _template_subs_lines['R{;II;}']
-                  ),
-        "aiPaths": ([] +
-                    _template_subs_aipaths['R-L2-3.3']
-                    )
-    },
-    "R08.5L2{}": {
+    "R08.5-L2": {
         "width": 8.5,
         "referencePointOffset": 0,
         "height": 0.1,
-        "surfaces": ([] +
-                     _template_subs_surfaces["8.5m-asphalt"]
-                     ),
-        "lines": (
-                []
-                  ),
-        "aiPaths": ([] +
-                    _template_subs_aipaths['R-L2-3.3']
-                    )
+        "surfaces": ([] + _template_subs_surfaces["8.5m-asphalt"]),
+        "lines": ([]),
+        "aiPaths": ([] + _template_subs_aipaths['R-L2-3.1'])
     },
     "V03.75G-P01.00C@01.75": {
         "width": 3.75,
@@ -89,7 +51,7 @@ _template_surfaces = {
         "referencePointOffset": -1.750,
         "height": 0.25,
         "surfaces": [
-            {"x1": 0, "x2": 3.5, "mapping": None, "material": "FootpathConcrete", "offset": 0}
+            {"x1": 0, "x2": 3.5, "mapping": None, "material": "SideConcrete", "offset": 0}
         ],
         "lines": [],
         "aiPaths": [
@@ -106,7 +68,7 @@ _template_surfaces = {
         ],
         "lines": [],
         "aiPaths": [
-            {"type": "pedestrian", "x": 3.0, "width": 1, "direction": "both"}
+            {"type": "pedestrian", "x": 2.0, "width": 1, "direction": "both"}
         ]
     },
     "V04.50-G-P01.00C@-01.50": {
@@ -119,7 +81,7 @@ _template_surfaces = {
         ],
         "lines": [],
         "aiPaths": [
-            {"type": "pedestrian", "x": 4.00, "width": 1, "direction": "both"}
+            {"type": "pedestrian", "x": 3.00, "width": 1, "direction": "both"}
         ]
     },
     "V05.25-G-P01.00C@-01.50": {
@@ -132,7 +94,7 @@ _template_surfaces = {
         ],
         "lines": [],
         "aiPaths": [
-            {"type": "pedestrian", "x": 4.75, "width": 1, "direction": "both"}
+            {"type": "pedestrian", "x": 3.75, "width": 1, "direction": "both"}
         ]
     }
 }
