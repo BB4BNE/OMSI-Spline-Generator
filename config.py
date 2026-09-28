@@ -1,4 +1,4 @@
-output_dir = "O:/SteamLibrary/steamapps/common/OMSI 2/Splines/BB4BNE/generated"
+output_dir = "M:/OMSI/instances/AU_BNE2024/Splines/BB4BNE_Generated"
 
 input_excel = "C:/OneDrive/BB4BNE Working/OMSI/RoadSplineDetails.xlsx"
 excel_sheet_lines = 'Lines'

@@ -14,6 +14,9 @@ def xPosSort(ptArray):
 def xPosSort1(ptArray):
     return ptArray['pathX']
 
+def xPosSort2(ptArray):
+    return ptArray['type']
+
 # Generate Formatted [path] tag sections of .sli files
 def format_paths(paths):
     output = "\n\n#### PATHS ####"
@@ -28,6 +31,7 @@ def format_paths(paths):
                 'direction': path_directions(path['direction'], pathGroup['flipped'])
             })
     pathGroupSorted.sort(key=xPosSort1)
+    pathGroupSorted.sort(key=xPosSort2)
     for pathSorted in pathGroupSorted:
         output += "\n\n[path]\n"
         output += f"{pathSorted['type']}\n"
@@ -277,6 +281,8 @@ def process_components(source, dict_materials, materials, paths, lines, heightPr
     if mode == 3:
         # decorations
         offset = x_offset
+        offset_left = offset  # fix error
+        offset_right = offset  # fix error
     elif mode == 0:
         # middle
         offset = referencePointOffset + inputOffset

@@ -27,5 +27,38 @@ _template_decorations = {
                 ]
             }
         ]
-    }
+    },
+    "median-1.2m-oldA": {
+        "sections": [
+            {
+                "material": "ConcreteBarrier",
+                "geometry": [
+                    {"x": -0.6, "y": 0.10, "mapping": None},
+                    {"x": -0.5, "y": 0.15, "mapping": None},
+                ]
+            },
+        ]
+    },
+    "median-1.2m-oldB": {
+        "sections": [
+            {
+                "material": "AggregateOld",
+                "geometry": [
+                    {"x": -0.5, "y": 0.15, "mapping": None},
+                    {"x": 0.5, "y": 0.15, "mapping": None},
+                ]
+            },
+        ]
+    },
+    "median-1.2m-oldC": {
+        "sections": [
+            {
+                "material": "ConcreteBarrier",
+                "geometry": [
+                    {"x": 0.5, "y": 0.15, "mapping": None},
+                    {"x": 0.6, "y": 0.10, "mapping": None},
+                ]
+            },
+        ]
+    },
 }
