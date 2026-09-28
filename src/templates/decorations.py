@@ -1,5 +1,5 @@
-from _data_subs_sections import _template_subs_sections
-from _data_subs import _template_sub_geometery
+from templates.shared_sections import _template_subs_sections
+from templates.shared import _template_sub_geometery
 
 _template_decorations = {
     "tunnelTestDummy": {

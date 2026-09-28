@@ -1,4 +1,4 @@
-from _data_subs import _template_subs_surfaces, _template_subs_aipaths, _template_subs_lines
+from templates.shared import _template_subs_surfaces, _template_subs_aipaths, _template_subs_lines
 
 _template_surfaces = {
     "R12.0-L4-A": {

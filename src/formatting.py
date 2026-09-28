@@ -3,9 +3,9 @@ import math
 import json
 
 # load data
-from _data_pieces import _template_pieces
-from _data_decorations import _template_decorations
-from _data_surfaces import _template_surfaces
+from templates.pieces import _template_pieces
+from templates.decorations import _template_decorations
+from templates.surfaces import _template_surfaces
 
 def xPosSort(ptArray):
     return ptArray['x1']

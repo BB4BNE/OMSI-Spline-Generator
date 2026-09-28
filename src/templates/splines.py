@@ -1,6 +1,6 @@
-from _data_subs_components import _template_subs_components
-from _data_subs import _template_subs_lines, _template_subs_lineGroups
-from _data_decorations import _template_decorations
+from templates.shared_components import _template_subs_components
+from templates.shared import _template_subs_lines, _template_subs_lineGroups
+from templates.decorations import _template_decorations
 
 _templates_splines = {
     "R08.5L2[GPG-GPG]": {
